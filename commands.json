@@ -1,0 +1,7 @@
+{
+  "init_db": "python -m wilbito.interfaces.exec db-init",
+  "db_stats": "python -m wilbito.interfaces.exec db-stats",
+  "run_codegen": "python -m wilbito.interfaces.exec run \"mejorar robustez de codegen\" --iters 2 --use-context --rag-tag codegen --top-k 3 --min-score 0.1",
+  "run_marketing": "python -m wilbito.interfaces.exec run \"plan de marketing 30 días\" --iters 2 --use-context --rag-tag marketing --top-k 3 --min-score 0.1",
+  "run_trading": "python -m wilbito.interfaces.exec run \"ajustar sizing XAUUSD en alta volatilidad\" --iters 1 --use-context --rag-tag trading --top-k 3 --min-score 0.1"
+}

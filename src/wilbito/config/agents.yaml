@@ -1,0 +1,12 @@
+council:
+  granularity: normal   # normal | fine
+  weights:
+    architect: 1.0
+    researcher: 1.0
+    codegen: 1.0
+    evaluator: 1.0
+    documenter: 1.0
+
+trading:
+  default_par: "XAUUSD"
+  backtest_trades: 200

@@ -1,0 +1,7 @@
+checklist:
+  - Crear y activar venv (wilbito-env): false
+  - pip install -e .: false
+  - Probar CLI (plan, autodev): false
+  - Correr API /health: false
+  - Configurar diario_wilbito (ruta existe): false
+  - Crear kill switch de prueba y verificar bloqueo: false

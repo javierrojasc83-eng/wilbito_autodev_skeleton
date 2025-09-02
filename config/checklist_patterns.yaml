@@ -1,0 +1,7 @@
+checklist:
+  - Crear EventBus (pub/sub) y ejemplo de suscripción: false
+  - Integrar Council (multi-agente) y correr 2 iteraciones: false
+  - Definir YAML por agente (src/wilbito/config/agents.yaml): false
+  - Aplicar Strategy para selección de tareas: false
+  - Añadir CircuitBreaker a herramientas externas (placeholder): false
+  - Tests mínimos por agente y pipeline corren: false

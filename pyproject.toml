@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wilbito"
+version = "0.1.0"
+description = "IA de autodesarrollo - skeleton"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "typer>=0.12",
+  "rich>=13.7",
+  "pydantic>=2.6",
+  "fastapi>=0.111",
+  "uvicorn[standard]>=0.29",
+  "pyyaml>=6.0"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+# 👇 MUY IMPORTANTE: que encuentre todos los paquetes bajo src/
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# 👇 Incluir YAML dentro del paquete (configs) cuando empaquetes
+[tool.setuptools.package-data]
+"wilbito" = ["**/*.yaml"]

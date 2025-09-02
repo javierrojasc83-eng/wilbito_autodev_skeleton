@@ -1,0 +1,7 @@
+{
+  "snapshot_dir": "artifacts/.rollback",
+  "snapshot_globs": [
+    "artifacts/**/*.py",
+    "src/**/*.py"
+  ]
+}

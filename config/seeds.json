@@ -1,0 +1,23 @@
+  {"text": "Plantilla de PR con checklist de pruebas (unitarias, integración, regresión)", "tag": "codegen"},
+  {"text": "Estructura de carpetas recomendada para proyectos Python con src/ y tests/", "tag": "codegen"},
+  {"text": "Estrategia para pruebas de regresión en codegen usando snapshots controlados", "tag": "codegen"},
+  {"text": "Convención de commits: Conventional Commits para changelog automatizado", "tag": "codegen"},
+  {"text": "Pipeline mínimo: plan → prototipo → tests → evaluar → documentar → release", "tag": "codegen"},
+
+  {"text": "Cadencia de contenidos 30 días (blog semanal + shorts 3x/semana + newsletter quincenal)", "tag": "marketing"},
+  {"text": "Pilares de contenido: educativo, testimonial, comparativo, behind-the-scenes", "tag": "marketing"},
+  {"text": "Playbook de lanzamiento: teaser, drop de features, prueba social, CTA claro", "tag": "marketing"},
+  {"text": "Growth loop simple: contenido → captación → email nurturing → demo → feedback", "tag": "marketing"},
+  {"text": "Métrica norte (North Star): activaciones semanales cualificadas", "tag": "marketing"},
+
+  {"text": "Estrategias de trading para XAUUSD en volatilidad alta: breakout y reversión intradía", "tag": "trading"},
+  {"text": "Gestión de riesgo: 1R por trade, riesgo total diario ≤ 3R", "tag": "trading"},
+  {"text": "Filtro macro: evitar operar en noticias de alto impacto (NFP, CPI, FOMC)", "tag": "trading"},
+  {"text": "Sesión óptima: Londres y solape Londres-Nueva York", "tag": "trading"},
+  {"text": "KPI del backtest: win_rate, profit_factor, max_drawdown, expectancy", "tag": "trading"},
+
+  {"text": "Check de calidad previo a release: lint ok, tests ok, mem-search responde, council --use-context OK", "tag": "codegen"},
+  {"text": "Mensaje de valor: promesa clara + prueba social + prueba gratis", "tag": "marketing"},
+  {"text": "Playbook de corrección: reproducir bug → test fallando → fix → test pasando → release", "tag": "codegen"},
+  {"text": "Sesgos comunes al backtest: overfitting, look-ahead bias, survivorship bias", "tag": "trading"},
+  {"text": "Framework AARRR: Acquisition, Activation, Retention, Referral, Revenue", "tag": "marketing"}

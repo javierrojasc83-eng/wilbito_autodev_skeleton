@@ -1,0 +1,7 @@
+checklist:
+  - Definir objetivo claro: false
+  - Planner genera subtareas: false
+  - Codegen produce artefacto: false
+  - Evaluator pasa tests mínimos: false
+  - Documenter escribe en diario: false
+  - Guardar resultados y métricas: false

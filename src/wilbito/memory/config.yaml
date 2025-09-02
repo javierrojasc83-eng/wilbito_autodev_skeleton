@@ -1,0 +1,3 @@
+memory:
+  vectorstore_dir: "memoria/vectorstore"
+  default_top_k: 5

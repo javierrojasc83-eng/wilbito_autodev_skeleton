@@ -1,0 +1,4 @@
+objetivo: "mejorar el agente de codegen"
+max_iter: 2
+gates:
+  require_human: true

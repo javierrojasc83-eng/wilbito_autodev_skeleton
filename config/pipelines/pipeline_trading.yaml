@@ -1,0 +1,5 @@
+par: "XAUUSD"
+n_trades: 500
+risk:
+  max_risk_per_trade_pct: 0.5
+  mode: "paper"

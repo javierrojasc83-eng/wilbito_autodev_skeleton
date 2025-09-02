@@ -1,0 +1,7 @@
+checklist:
+  - Consejo de IAs operativo (council): false
+  - EventBus in-proc funcionando: false
+  - Agentes desacoplados (Strategy): false
+  - CLI con flags y posicionales: false
+  - Configuración declarativa por agente: false
+  - Tests mínimos por agente: false

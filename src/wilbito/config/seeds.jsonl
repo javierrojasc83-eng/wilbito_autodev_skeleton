@@ -1,0 +1,20 @@
+{"text":"Plantilla de PR con checklist de pruebas (unitarias, integración, regresión)","tag":"codegen"}
+{"text":"Estrategia de codegen: small steps, tests-first, revert on fail","tag":"codegen"}
+{"text":"Pipeline de CI: lint, tests, build, smoke-tests","tag":"codegen"}
+{"text":"Guía de branch naming y convenciones de commits (Conventional Commits)","tag":"codegen"}
+{"text":"Recomendación: usar Strategy Pattern para seleccionar herramientas en runtime","tag":"codegen"}
+{"text":"Agregar circuit-breaker y backoff exponencial para herramientas externas","tag":"codegen"}
+{"text":"Métricas de codegen: tasa de compilación, % tests OK, tiempo por iteración","tag":"codegen"}
+{"text":"Diseño de prompts con guardrails y ejemplos negativos (anti-patterns)","tag":"codegen"}
+{"text":"Cadencia de contenidos 30 días (blog + shorts + newsletter)","tag":"marketing"}
+{"text":"Calendario editorial: 3 posts/semana, 2 shorts/semana, 1 newsletter/semana","tag":"marketing"}
+{"text":"Pilares de contenido: educativo, casos de uso, comparativas, behind-the-scenes","tag":"marketing"}
+{"text":"SEO rápido: títulos claros, metadescripciones, enlazado interno, esquema FAQ","tag":"marketing"}
+{"text":"Playbook de distribución: LinkedIn, YouTube Shorts, newsletter, comunidad","tag":"marketing"}
+{"text":"Lead magnets: checklist descargable + mini-curso por email","tag":"marketing"}
+{"text":"Trader XAUUSD: en alta volatilidad, reducir tamaño y ampliar stop técnico","tag":"trading"}
+{"text":"Backtest mínimo: 200 trades, split por régimen, reportar win_rate y PF","tag":"trading"}
+{"text":"Estrategia mean-reversion intradía con filtro de volatilidad ATR","tag":"trading"}
+{"text":"Gestión de riesgo: 1R por trade, máximo 3R/día, cortar si drawdown > 5R","tag":"trading"}
+{"text":"Registro de sesiones: hipótesis, resultado, mejora; revisar semanalmente","tag":"trading"}
+{"text":"Check de noticias macro: evitar operar 30min antes/después de NFP/CPI","tag":"trading"}

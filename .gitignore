@@ -1,0 +1,8 @@
+/.vscode/
+/__pycache__/
+*.pyc
+state/
+backup/
+*.bak
+.mem/
+.venv/

@@ -1,0 +1,6 @@
+checklist:
+  - Ejecutar pytest en artefactos generados: false
+  - Verificar lint/compilación: false
+  - Generar release con bump patch: false
+  - Revisar PR simulado (Council Reviewer): false
+  - Aplicar policies en safety (horarios y lotes): false

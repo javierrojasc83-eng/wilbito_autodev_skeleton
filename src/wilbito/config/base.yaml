@@ -1,0 +1,21 @@
+runtime:
+  max_concurrent_tasks: 3
+  budget:
+    tokens: 200000
+    wallclock_minutes: 30
+
+safety:
+  human_gate_required: true
+  kill_switch_file: ".wilbito_stop"
+  allowed_markets: ["XAUUSD","EURUSD","BTCUSD"]
+  max_risk_per_trade_pct: 0.5
+
+memory:
+  diary_path: "memoria/diario_wilbito"
+  artifacts_path: "artifacts"
+
+agents:
+  council: ["arquitecto","codegen","evaluador","documentador","researcher"]
+  trading:
+    mode: "paper"
+    sl_tp_policy: "atr_2x"

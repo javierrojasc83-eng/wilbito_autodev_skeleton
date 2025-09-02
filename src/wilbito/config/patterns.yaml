@@ -1,0 +1,11 @@
+patterns:
+  - name: "Strategy"
+    usage: "Seleccionar ruta/agente según tipo de tarea o condiciones."
+  - name: "Pipeline"
+    usage: "Secuenciar pasos: plan -> codegen -> eval -> doc."
+  - name: "PubSub"
+    usage: "EventBus in-proc para desacoplar productores/consumidores."
+  - name: "CircuitBreaker"
+    usage: "Proteger llamadas a herramientas externas con fail-fast y cooldown."
+  - name: "Factory (ligera)"
+    usage: "Centralizar creación de agentes/herramientas."

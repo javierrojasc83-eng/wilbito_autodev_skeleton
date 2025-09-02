@@ -1,0 +1,29 @@
+WILBITO AUTODEV - FASE #2 (Estructura + Patrones)
+================================================
+
+Cómo aplicar en tu proyecto existente (wilbito_autodev_skeleton):
+
+1) Copiá este zip dentro de tu carpeta del proyecto:
+   C:\Users\Usuario\Documents\2025\Javier 2025\wilbito_autodev_skeleton
+
+2) Extraé encima (reemplazar archivos cuando pregunte):
+   - Sobre-escribe src\wilbito\interfaces\cli.py
+   - Agrega nuevos módulos (eventbus, council, agents, tools)
+   - Agrega nuevos YAML en src\wilbito\config\
+   - Agrega checklists en config\
+
+3) Reinstalá en editable para refrescar imports:
+   (wilbito-env) PS> python -m pip install -e .
+
+4) Probar:
+   (a) Consejo de IAs (multi-agente):
+       python -m wilbito.interfaces.cli council --objetivo "mejorar robustez de codegen" --max-iter 2
+
+   (b) EventBus demo (se prueba indirectamente en council/tests)
+
+   (c) Ver diario:
+       memoria\diario_wilbito\YYYY\MM\diario_YYYYMMDD.md
+
+5) Checklists:
+   - config\checklist_patterns.yaml  → marcá lo aplicado
+   - src\wilbito\config\patterns.yaml → referencia de patrones activos

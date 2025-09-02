@@ -1,0 +1,4 @@
+quality:
+  tests_required: true
+  lint_required: true
+  coverage_min: 50

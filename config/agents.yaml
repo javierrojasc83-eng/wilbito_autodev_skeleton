@@ -1,0 +1,10 @@
+router:
+  max_iter_default: 1
+  top_k_default: 5
+  use_context_default: false
+
+council:
+  max_iter_default: 2
+  granularity_default: coarse   # opciones: coarse | fine
+  top_k_default: 5
+  use_context_default: false
