@@ -1,0 +1,6 @@
+[
+  { "step_id":"db-migrate-memoria", "cmd":["python","tools/db_migrate.py","--db","memoria/db/wilbito.db"], "expect_json":false },
+  { "step_id":"db-migrate-state",   "cmd":["python","tools/db_migrate.py"], "expect_json":false },
+  { "step_id":"seed-check",         "cmd":["python","tools/seed_check.py","--state","state/seed.json","--create-if-missing"], "expect_json":false },
+  { "step_id":"quality",            "cmd":["python","tools/quality_wrapper.py"], "expect_json":true, "must_have":["unittest"], "fail_if_empty_fields":["unittest"] }
+]
