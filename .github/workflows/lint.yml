@@ -1,10 +1,10 @@
-name: Lint & Typecheck
+name: pre-commit (ruff + mypy)
 on:
   push:
   pull_request:
 
 jobs:
-  pre-commit:
+  precommit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -12,9 +12,6 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"
-      - name: Install deps (if requirements.txt exists)
-        run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - uses: pre-commit/action@v3.0.1
         with:
-          extra_args: --all-files
+          extra_args: --all-files --show-diff-on-failure
