@@ -1,5 +1,7 @@
-import json, os
+import json
+import os
 from typing import Any
+
 
 class JsonStore:
     def __init__(self, path: str):
@@ -10,7 +12,7 @@ class JsonStore:
                 json.dump({}, f)
 
     def write(self, key: str, value: Any):
-        with open(self.path, "r", encoding="utf-8") as f:
+        with open(self.path, encoding="utf-8") as f:
             data = json.load(f)
         data[key] = value
         with open(self.path, "w", encoding="utf-8") as f:

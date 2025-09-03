@@ -1,8 +1,9 @@
 from wilbito.agents.architect import ArchitectAgent
-from wilbito.agents.researcher import ResearcherAgent
 from wilbito.agents.codegen import CodegenAgent
-from wilbito.agents.evaluator import EvaluatorAgent
 from wilbito.agents.documenter import DocumenterAgent
+from wilbito.agents.evaluator import EvaluatorAgent
+from wilbito.agents.researcher import ResearcherAgent
+
 
 def test_agents_minimal(tmp_path):
     arch = ArchitectAgent()

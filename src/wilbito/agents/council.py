@@ -1,7 +1,9 @@
 from __future__ import annotations
-from typing import Dict, Any, List
 
-def run(objetivo: str, max_iter: int = 2, granularity: str = "coarse") -> Dict[str, Any]:
+from typing import Any, Dict, List
+
+
+def run(objetivo: str, max_iter: int = 2, granularity: str = "coarse") -> dict[str, Any]:
     """
     Consejo multi-agente mínimo.
     - Normaliza max_iter para que nunca sea None ni inválido.
@@ -30,18 +32,18 @@ def run(objetivo: str, max_iter: int = 2, granularity: str = "coarse") -> Dict[s
         ],
     }
 
-    iters: List[Dict[str, Any]] = []
+    iters: list[dict[str, Any]] = []
     for i in range(max_iter):
         artefacto = {
             "artefacto": "demo.py",
-            "contenido": f"# Auto-generado iter {i+1} para: {objetivo}\n"
-                         "def demo():\n"
-                         "    return 'ok'\n"
+            "contenido": f"# Auto-generado iter {i + 1} para: {objetivo}\ndef demo():\n    return 'ok'\n",
         }
-        iters.append({
-            "iter": i + 1,
-            "artefacto": artefacto,
-            "eval": {"passed": True, "metrics": {"tests": "ok"}},
-        })
+        iters.append(
+            {
+                "iter": i + 1,
+                "artefacto": artefacto,
+                "eval": {"passed": True, "metrics": {"tests": "ok"}},
+            }
+        )
 
     return {"rfc": rfc, "research": research, "iteraciones": iters}

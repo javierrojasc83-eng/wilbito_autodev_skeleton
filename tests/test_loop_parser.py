@@ -1,4 +1,5 @@
 import unittest
+
 from wilbito.executor.loop import ExecutorLoop
 
 
@@ -48,7 +49,7 @@ post
         self._ok(text, {"uno": 1})
 
     def test_bom_y_crlf(self):
-        text = "\ufeff\r\nINFO\n{ \"x\": 10, \"y\": [\"a\", \"b\"] }\r\nDONE\r\n"
+        text = '\ufeff\r\nINFO\n{ "x": 10, "y": ["a", "b"] }\r\nDONE\r\n'
         self._ok(text, {"x": 10, "y": ["a", "b"]})
 
     def test_anidado_balanceado(self):

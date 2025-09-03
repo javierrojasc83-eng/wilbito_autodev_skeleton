@@ -1,10 +1,13 @@
 from __future__ import annotations
+
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
 from wilbito.memory.vectorstore import VectorStore
 
-def write_entry(texto: str, tag: Optional[str] = None) -> Dict[str, Any]:
+
+def write_entry(texto: str, tag: str | None = None) -> dict[str, Any]:
     """
     Escribe en memoria/diario_wilbito/YYYY/MM/diario_YYYYMMDD.md
     Devuelve dict con path; intenta auto-ingestar en vectorstore si hay tag.
@@ -30,7 +33,14 @@ def write_entry(texto: str, tag: Optional[str] = None) -> Dict[str, Any]:
         vs = VectorStore.load(str(dbp))
         # usa add_texts si existe, senón fallback a add_text
         if hasattr(vs, "add_texts"):
-            vs.add_texts([{"text": texto, "meta": {"tag": tag, "source": "diario", "timestamp": ts, "file": str(fp)}}])
+            vs.add_texts(
+                [
+                    {
+                        "text": texto,
+                        "meta": {"tag": tag, "source": "diario", "timestamp": ts, "file": str(fp)},
+                    }
+                ]
+            )
         else:
             vs.add_text(texto, {"tag": tag, "source": "diario", "timestamp": ts, "file": str(fp)})
         vs.save(str(dbp))

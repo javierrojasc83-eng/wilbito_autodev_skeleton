@@ -1,9 +1,10 @@
 from __future__ import annotations
+
 import json
 import sqlite3
-from pathlib import Path
 from datetime import datetime
-from typing import Any, Dict, Optional
+from pathlib import Path
+from typing import Any, Dict
 
 DEFAULT_DB = Path("memoria") / "db" / "wilbito.db"
 
@@ -93,8 +94,14 @@ def finish_run(run_id: int, status: str = "ok", db_path: str | Path = DEFAULT_DB
     conn.close()
 
 
-def log_task(run_id: int, step: int, name: str, status: str, detail: Dict[str, Any] | None,
-             db_path: str | Path = DEFAULT_DB) -> int:
+def log_task(
+    run_id: int,
+    step: int,
+    name: str,
+    status: str,
+    detail: dict[str, Any] | None,
+    db_path: str | Path = DEFAULT_DB,
+) -> int:
     conn = connect(db_path)
     cur = conn.cursor()
     cur.execute(
@@ -107,8 +114,7 @@ def log_task(run_id: int, step: int, name: str, status: str, detail: Dict[str, A
     return int(task_id)
 
 
-def log_event(run_id: int, kind: str, payload: Dict[str, Any] | None,
-              db_path: str | Path = DEFAULT_DB) -> int:
+def log_event(run_id: int, kind: str, payload: dict[str, Any] | None, db_path: str | Path = DEFAULT_DB) -> int:
     conn = connect(db_path)
     cur = conn.cursor()
     cur.execute(
@@ -121,8 +127,7 @@ def log_event(run_id: int, kind: str, payload: Dict[str, Any] | None,
     return int(ev_id)
 
 
-def add_artifact(run_id: int, rel_path: str, content: str,
-                 db_path: str | Path = DEFAULT_DB) -> int:
+def add_artifact(run_id: int, rel_path: str, content: str, db_path: str | Path = DEFAULT_DB) -> int:
     path = Path(rel_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
@@ -139,10 +144,10 @@ def add_artifact(run_id: int, rel_path: str, content: str,
     return int(art_id)
 
 
-def stats(db_path: str | Path = DEFAULT_DB) -> Dict[str, Any]:
+def stats(db_path: str | Path = DEFAULT_DB) -> dict[str, Any]:
     conn = connect(db_path)
     cur = conn.cursor()
-    out: Dict[str, Any] = {}
+    out: dict[str, Any] = {}
     for table in ("runs", "tasks", "artifacts", "events"):
         cur.execute(f"SELECT COUNT(*) AS n FROM {table}")
         out[table] = cur.fetchone()["n"]

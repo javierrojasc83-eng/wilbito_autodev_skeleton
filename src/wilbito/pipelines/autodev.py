@@ -1,13 +1,15 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+
+from ..agents.codegen import CodegenAgent
+from ..agents.documenter import DocumenterAgent
+from ..agents.evaluator import EvaluatorAgent
 from ..core.planner import Planner
 from ..core.router import Router
-from ..agents.codegen import CodegenAgent
-from ..agents.evaluator import EvaluatorAgent
-from ..agents.documenter import DocumenterAgent
 from ..safety.gates import SafetyGate
 
+
 class AutodevPipeline:
-    def __init__(self, cfg: Dict[str, Any]):
+    def __init__(self, cfg: dict[str, Any]):
         self.cfg = cfg
         self.planner = Planner()
         self.router = Router()
@@ -16,9 +18,9 @@ class AutodevPipeline:
         self.doc = DocumenterAgent(cfg["memory"]["diary_path"])
         self.gate = SafetyGate(cfg["safety"])
 
-    def run(self, objetivo: str, max_iter: int = 1) -> List[Dict[str, Any]]:
+    def run(self, objetivo: str, max_iter: int = 1) -> list[dict[str, Any]]:
         if self.gate.check_kill_switch():
-            return [{"status":"aborted"}]
+            return [{"status": "aborted"}]
         tareas = self.planner.plan(objetivo)
         resultados = []
         for i, t in enumerate(tareas[:max_iter]):

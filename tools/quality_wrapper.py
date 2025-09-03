@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 import json
+import re
 import subprocess
 import sys
-import re
 
 
 def extract_first_json(s):

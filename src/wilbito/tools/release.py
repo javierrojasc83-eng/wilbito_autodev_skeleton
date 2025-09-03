@@ -1,23 +1,34 @@
-import os, json, datetime, zipfile
+import datetime
+import json
+import os
+import zipfile
+
 
 def _load_version(vpath):
     if not os.path.exists(vpath):
-        return [0,1,0]
-    with open(vpath, "r", encoding="utf-8") as f:
-        return (json.load(f).get("version") or [0,1,0])
+        return [0, 1, 0]
+    with open(vpath, encoding="utf-8") as f:
+        return json.load(f).get("version") or [0, 1, 0]
+
 
 def _save_version(vpath, version):
     os.makedirs(os.path.dirname(vpath), exist_ok=True)
     with open(vpath, "w", encoding="utf-8") as f:
-        json.dump({"version": version, "updated": datetime.datetime.utcnow().isoformat()+"Z"}, f, indent=2)
+        json.dump(
+            {"version": version, "updated": datetime.datetime.utcnow().isoformat() + "Z"},
+            f,
+            indent=2,
+        )
+
 
 def _bump(kind, version):
     major, minor, patch = version
     if kind == "major":
-        return [major+1, 0, 0]
+        return [major + 1, 0, 0]
     if kind == "minor":
-        return [major, minor+1, 0]
-    return [major, minor, patch+1]
+        return [major, minor + 1, 0]
+    return [major, minor, patch + 1]
+
 
 def run_release(bump: str = "patch"):
     base_dir = os.getcwd()

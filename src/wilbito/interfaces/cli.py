@@ -1,32 +1,34 @@
 # src/wilbito/interfaces/cli.py
 from __future__ import annotations
+
 import json
 import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
 
 import typer
 from rich import print
 
-# --- Config ---
-from wilbito.config import load_config, get_default
+from wilbito.agents import council as council_agent
 
 # --- Agents / Tools / Memory ---
 from wilbito.agents import router as router_agent
-from wilbito.agents import council as council_agent
-from wilbito.tools import trading as trading_tools
-from wilbito.tools import quality as quality_tools
-from wilbito.tools import pr as pr_tools
-from wilbito.tools import release as release_tool
+
+# --- Config ---
+from wilbito.config import get_default, load_config
 from wilbito.memory.diario import write_entry
 from wilbito.memory.vectorstore import VectorStore
+from wilbito.tools import pr as pr_tools
+from wilbito.tools import quality as quality_tools
+from wilbito.tools import release as release_tool
+from wilbito.tools import trading as trading_tools
 
 app = typer.Typer(help="CLI Wilbito Autodev")
 
 # Cargamos config (si existe). No hacemos fallar el CLI si no hay YAML.
-CFG: Dict[str, Any] = load_config()
+CFG: dict[str, Any] = load_config()
 
 
 # ----------------------------------------------------------------------
@@ -35,11 +37,14 @@ CFG: Dict[str, Any] = load_config()
 def _repo_root() -> Path:
     return Path(os.getcwd()).resolve()
 
+
 def _mem_db_path() -> Path:
     return _repo_root() / "memoria" / "vector_db" / "vectorstore.json"
 
+
 def _ensure_parent(p: Path):
     p.parent.mkdir(parents=True, exist_ok=True)
+
 
 def _echo_json(obj: Any):
     print(json.dumps(obj, ensure_ascii=False, indent=4))
@@ -69,12 +74,15 @@ def plan_cmd(objetivo: str):
 def autodev_cmd(
     objetivo: str,
     max_iter: int = typer.Option(get_default(CFG, "router.max_iter_default", 1), help="Iteraciones máximas"),
-    use_context: bool = typer.Option(get_default(CFG, "router.use_context_default", False), help="Activar recuperación de contexto (RAG)"),
+    use_context: bool = typer.Option(
+        get_default(CFG, "router.use_context_default", False),
+        help="Activar recuperación de contexto (RAG)",
+    ),
     top_k: int = typer.Option(get_default(CFG, "router.top_k_default", 5), help="Cantidad de resultados de memoria"),
-    rag_tag: Optional[str] = typer.Option(None, help="Tag preferente para RAG (codegen|marketing|trading)"),
+    rag_tag: str | None = typer.Option(None, help="Tag preferente para RAG (codegen|marketing|trading)"),
     min_score: float = typer.Option(0.0, help="Umbral mínimo de score RAG (0.0-1.0)"),
 ):
-    ctx: List[Dict[str, Any]] = []
+    ctx: list[dict[str, Any]] = []
     if use_context:
         db_path = _mem_db_path()
         vdb = VectorStore.load(str(db_path))
@@ -97,12 +105,15 @@ def council_cmd(
     objetivo: str,
     max_iter: int = typer.Option(get_default(CFG, "council.max_iter_default", 2), help="Iteraciones de consejo"),
     granularity: str = typer.Option(get_default(CFG, "council.granularity_default", "coarse"), help="coarse|fine"),
-    use_context: bool = typer.Option(get_default(CFG, "council.use_context_default", False), help="Activar recuperación de contexto (RAG)"),
+    use_context: bool = typer.Option(
+        get_default(CFG, "council.use_context_default", False),
+        help="Activar recuperación de contexto (RAG)",
+    ),
     top_k: int = typer.Option(get_default(CFG, "council.top_k_default", 5), help="Cantidad de resultados de memoria"),
-    rag_tag: Optional[str] = typer.Option(None, help="Tag preferente para RAG (codegen|marketing|trading)"),
+    rag_tag: str | None = typer.Option(None, help="Tag preferente para RAG (codegen|marketing|trading)"),
     min_score: float = typer.Option(0.0, help="Umbral mínimo de score RAG (0.0-1.0)"),
 ):
-    ctx: List[Dict[str, Any]] = []
+    ctx: list[dict[str, Any]] = []
     if use_context:
         db_path = _mem_db_path()
         vdb = VectorStore.load(str(db_path))
@@ -132,7 +143,7 @@ def trading_backtest_cmd(
 @app.command("diario")
 def diario_cmd(
     texto: str,
-    tag: Optional[str] = typer.Option(None, help="Si se provee, auto-ingesta a memoria con este tag"),
+    tag: str | None = typer.Option(None, help="Si se provee, auto-ingesta a memoria con este tag"),
 ):
     write_res = write_entry(texto)
     ingested = False
@@ -155,7 +166,7 @@ def quality_cmd():
     lint_res = quality_tools.run_quality()
 
     tests_dir = _repo_root() / "tests"
-    pytest_result: Optional[Dict[str, Any]] = None
+    pytest_result: dict[str, Any] | None = None
 
     if tests_dir.exists():
         try:
@@ -173,8 +184,13 @@ def quality_cmd():
                 "os.environ['PYTEST_DISABLE_PLUGIN_AUTOLOAD']='1'; "
                 "sys.exit(pytest.main(" + repr(pytest_args) + "))"
             )
-            r = subprocess.run([sys.executable, "-c", code],
-                               capture_output=True, text=True, env=env, cwd=str(_repo_root()))
+            r = subprocess.run(
+                [sys.executable, "-c", code],
+                capture_output=True,
+                text=True,
+                env=env,
+                cwd=str(_repo_root()),
+            )
             pytest_result = {
                 "returncode": r.returncode,
                 "stdout": (r.stdout or "").strip()[-2000:],
@@ -183,8 +199,13 @@ def quality_cmd():
 
             # 2) Fallback a unittest si pytest falló por entorno/plugines
             if r.returncode != 0 and "sympy" in ((r.stderr or "") + (r.stdout or "")):
-                u = subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-q"],
-                                   capture_output=True, text=True, env=env, cwd=str(_repo_root()))
+                u = subprocess.run(
+                    [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-q"],
+                    capture_output=True,
+                    text=True,
+                    env=env,
+                    cwd=str(_repo_root()),
+                )
                 pytest_result = {
                     "note": "pytest falló por plugins externos; se corrió unittest discover",
                     "returncode": u.returncode,
@@ -206,10 +227,10 @@ def pr_cmd(
     objetivo: str,
     use_context: bool = typer.Option(False, help="RAG opcional para enriquecer el PR"),
     top_k: int = typer.Option(5, help="Resultados de memoria"),
-    rag_tag: Optional[str] = typer.Option(None, help="Tag preferente para RAG"),
+    rag_tag: str | None = typer.Option(None, help="Tag preferente para RAG"),
     min_score: float = typer.Option(0.0, help="Umbral mínimo de score RAG"),
 ):
-    ctx: List[Dict[str, Any]] = []
+    ctx: list[dict[str, Any]] = []
     if use_context:
         db_path = _mem_db_path()
         vdb = VectorStore.load(str(db_path))
@@ -239,7 +260,7 @@ def release_cmd(
 @app.command("mem-ingest")
 def mem_ingest_cmd(
     texto: str,
-    etiqueta: Optional[str] = typer.Option(None, help="Tag opcional a guardar en meta"),
+    etiqueta: str | None = typer.Option(None, help="Tag opcional a guardar en meta"),
 ):
     db_path = _mem_db_path()
     vdb = VectorStore.load(str(db_path))
@@ -253,7 +274,7 @@ def mem_ingest_cmd(
 def mem_search_cmd(
     query: str,
     top_k: int = typer.Option(5, help="Resultados"),
-    rag_tag: Optional[str] = typer.Option(None, help="Tag preferente para RAG (boost)"),
+    rag_tag: str | None = typer.Option(None, help="Tag preferente para RAG (boost)"),
     min_score: float = typer.Option(0.0, help="Umbral mínimo de score"),
 ):
     db_path = _mem_db_path()
@@ -293,7 +314,7 @@ def mem_seed_cmd(
     vdb = VectorStore.load(str(db_path))
 
     ingested = 0
-    with open(src, "r", encoding="utf-8") as f:
+    with open(src, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:

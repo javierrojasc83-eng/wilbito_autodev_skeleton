@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import os
 from pathlib import Path
 
@@ -6,6 +7,7 @@ from pathlib import Path
 # Evita colisiones con reportlab.lib.yaml (que NO tiene safe_load)
 try:
     from yaml import safe_load as _yaml_safe_load  # type: ignore
+
     _HAS_PYYAML = True
 except Exception:
     _yaml_safe_load = None  # type: ignore
@@ -25,6 +27,7 @@ DEFAULTS = {
     },
 }
 
+
 def _load_yaml_dict(fp: Path) -> dict:
     """
     Carga YAML de forma segura si PyYAML está disponible.
@@ -42,6 +45,7 @@ def _load_yaml_dict(fp: Path) -> dict:
     except Exception:
         # YAML inválido o error de parseo → ignora y usa defaults.
         return {}
+
 
 def load_config() -> dict:
     """
@@ -65,6 +69,7 @@ def load_config() -> dict:
         else:
             merged[k] = v
     return merged
+
 
 def get_default(cfg: dict, section_or_path: str, key: str | None = None, default=None):
     """

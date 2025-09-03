@@ -1,0 +1,41 @@
+[
+  {
+    "step_id": "seed-check",
+    "cmd": [
+      "python",
+      "-m",
+      "wilbito.interfaces.cli",
+      "mem-search",
+      "regresión codegen",
+      "--rag-tag",
+      "codegen",
+      "--min-score",
+      "0.1",
+      "--top-k",
+      "3"
+    ],
+    "expect_json": true,
+    "must_have": [
+      "results"
+    ],
+    "fail_if_empty_fields": [
+      "results"
+    ]
+  },
+  {
+    "step_id": "quality",
+    "cmd": [
+      "python",
+      "-m",
+      "wilbito.interfaces.cli",
+      "quality"
+    ],
+    "expect_json": true,
+    "must_have": [
+      "lint"
+    ],
+    "json_path_ok": [
+      "lint.unittest.returncode==0"
+    ]
+  }
+]

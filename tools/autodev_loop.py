@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Auto-dev loop robusto: ejecuta el executor-run varias veces y consolida resultados.
 
 - Intenta parsear JSON de stdout (ideal), si falla intenta heurísticas:
@@ -39,7 +38,7 @@ def _scan_balanced_json(
     start: int,
     open_ch: str,
     close_ch: str,
-) -> Tuple[Optional[Any], int]:
+) -> tuple[Any | None, int]:
     """Desde s[start]==open_ch, busca el cierre balanceado y hace json.loads del fragmento."""
     depth = 0
     in_str = False
@@ -71,9 +70,9 @@ def _scan_balanced_json(
     return None, i
 
 
-def _extract_json_objects(s: str) -> List[Any]:
+def _extract_json_objects(s: str) -> list[Any]:
     """Extrae todos los objetos/arrays JSON balanceados embebidos en s."""
-    out: List[Any] = []
+    out: list[Any] = []
     i = 0
     while i < len(s):
         ch = s[i]
@@ -93,13 +92,14 @@ def _extract_json_objects(s: str) -> List[Any]:
     return out
 
 
-def _choose_best_json(objs: List[Any]) -> Optional[Dict[str, Any]]:
+def _choose_best_json(objs: list[Any]) -> dict[str, Any] | None:
     """Entre varios candidatos, favorece dicts que parezcan la salida del executor."""
-    dicts: List[Dict[str, Any]] = [o for o in objs if isinstance(o, dict)]
+    dicts: list[dict[str, Any]] = [o for o in objs if isinstance(o, dict)]
     if not dicts:
         return None
+
     # Score simple: +1 por cada clave típica presente.
-    def score(d: Dict[str, Any]) -> int:
+    def score(d: dict[str, Any]) -> int:
         keys = ("ok", "status", "run_id", "executed")
         return sum(1 for k in keys if k in d)
 
@@ -111,7 +111,7 @@ def _parse_executor_json(
     stdout_text: str,
     stderr_text: str,
     verbose: bool = False,
-) -> Optional[Dict[str, Any]]:
+) -> dict[str, Any] | None:
     """Intenta parsear JSON de la ejecución del executor."""
     out = _clean_text(stdout_text or "")
     err = _clean_text(stderr_text or "")
@@ -152,18 +152,17 @@ def _parse_executor_json(
 
 # ------------------------------ ejecución runner ------------------------------ #
 
+
 def _run_executor_subprocess(
     root: Path,
     commands_path: str,
     run_name: str,
     verbose: bool,
-) -> Tuple[Optional[Dict[str, Any]], int, str, str]:
+) -> tuple[dict[str, Any] | None, int, str, str]:
     """Ejecuta el executor-run y devuelve (data, rc, stdout, stderr)."""
     src = str(root / "src")
     if src not in (os.environ.get("PYTHONPATH") or ""):
-        os.environ["PYTHONPATH"] = (
-            src + os.pathsep + os.environ.get("PYTHONPATH", "")
-        ).strip(os.pathsep)
+        os.environ["PYTHONPATH"] = (src + os.pathsep + os.environ.get("PYTHONPATH", "")).strip(os.pathsep)
 
     cmd = [
         sys.executable,
@@ -192,7 +191,7 @@ def run_once(
     commands_path: str,
     run_name: str,
     verbose: bool,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Corre una vez el pipeline y devuelve el dict JSON (o un error uniforme)."""
     root = Path(__file__).resolve().parents[1]
 
@@ -241,7 +240,7 @@ def main() -> None:
     )
     args = ap.parse_args()
 
-    results: List[Dict[str, Any]] = []
+    results: list[dict[str, Any]] = []
     for i in range(1, args.iterations + 1):
         run_name = f"autodev-loop-{i}-{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
         data = run_once(args.commands, run_name, args.verbose)

@@ -1,5 +1,6 @@
 from wilbito.pipelines.council import CouncilPipeline
 
+
 def test_council_runs(tmp_path):
     diary = tmp_path / "diario"
     pipe = CouncilPipeline(str(diary))

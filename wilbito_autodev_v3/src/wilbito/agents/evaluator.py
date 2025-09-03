@@ -1,10 +1,14 @@
-import os, datetime
-from typing import Dict, Any
+import datetime
+import os
+from typing import Any, Dict
+
 from rich import print
+
 from ..tools.lint import check_syntax
 
+
 class EvaluatorAgent:
-    def evaluate(self, artefacto: Dict[str, Any]) -> Dict[str, Any]:
+    def evaluate(self, artefacto: dict[str, Any]) -> dict[str, Any]:
         code = (artefacto or {}).get("contenido", "")
         name = (artefacto or {}).get("artefacto", "artifact.py")
         # Guardar en artifacts/
@@ -17,4 +21,9 @@ class EvaluatorAgent:
         lint = check_syntax(code)
         passed = bool(lint.get("syntax_ok"))
         print("[yellow]Evaluator[/yellow] → Syntax:", "OK" if passed else "ERROR")
-        return {"passed": passed, "syntax": lint, "file": fn, "ts": datetime.datetime.utcnow().isoformat()+"Z"}
+        return {
+            "passed": passed,
+            "syntax": lint,
+            "file": fn,
+            "ts": datetime.datetime.utcnow().isoformat() + "Z",
+        }

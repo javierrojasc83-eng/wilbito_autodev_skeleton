@@ -1,19 +1,20 @@
 # src/wilbito/interfaces/exec.py
 from __future__ import annotations
+
 import json
 import os
 import sqlite3
-from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import typer
 from rich import print
 
-from wilbito.executor.loop import ExecutorLoop
 from wilbito.agents.council_v2 import run_council_v2
+from wilbito.executor.loop import ExecutorLoop
 
 app = typer.Typer(help="Exec/DB/Council v2")
+
 
 # -------------------------------------------------------------------
 # Paths & DB helpers
@@ -21,14 +22,18 @@ app = typer.Typer(help="Exec/DB/Council v2")
 def repo_root() -> Path:
     return Path(os.getcwd()).resolve()
 
+
 def db_path() -> Path:
     return repo_root() / "memoria" / "db" / "wilbito.db"
+
 
 def ensure_parent(p: Path) -> None:
     p.parent.mkdir(parents=True, exist_ok=True)
 
+
 def _echo_json(obj: Any) -> None:
     print(json.dumps(obj, ensure_ascii=False, indent=4))
+
 
 SCHEMA_SQL = """
 PRAGMA journal_mode=WAL;
@@ -78,12 +83,14 @@ CREATE TABLE IF NOT EXISTS events (
 );
 """
 
+
 def db_connect() -> sqlite3.Connection:
     p = db_path()
     ensure_parent(p)
     conn = sqlite3.connect(p.as_posix())
     conn.execute("PRAGMA foreign_keys = ON;")
     return conn
+
 
 def db_init() -> None:
     conn = db_connect()
@@ -92,6 +99,7 @@ def db_init() -> None:
         conn.commit()
     finally:
         conn.close()
+
 
 # -------------------------------------------------------------------
 # Commands
@@ -105,6 +113,7 @@ def db_init_cmd():
     db_init()
     _echo_json({"ok": True, "db": db_path().as_posix()})
 
+
 @app.command("db-stats")
 def db_stats_cmd():
     """
@@ -114,11 +123,13 @@ def db_stats_cmd():
     db_init()
     conn = db_connect()
     try:
+
         def count(tab):
             try:
                 return conn.execute(f"SELECT COUNT(*) FROM {tab}").fetchone()[0]
             except Exception:
                 return 0
+
         stats = {
             "runs": count("runs"),
             "tasks": count("tasks"),
@@ -129,11 +140,12 @@ def db_stats_cmd():
     finally:
         conn.close()
 
+
 @app.command("executor-run")
 def executor_run_cmd(
     commands: str = typer.Option(..., help="Ruta a config/commands.json"),
-    rollback: Optional[str] = typer.Option(None, help="Ruta a config/rollback.json"),
-    run_name: Optional[str] = typer.Option(None, help="Nombre del run (opcional)")
+    rollback: str | None = typer.Option(None, help="Ruta a config/rollback.json"),
+    run_name: str | None = typer.Option(None, help="Nombre del run (opcional)"),
 ):
     """
     Ejecuta una lista secuencial de comandos (JSON) con logging en DB y manejo de rollback.
@@ -144,13 +156,14 @@ def executor_run_cmd(
     res = loop.run(commands_path=commands, rollback_path=rollback, run_name=run_name)
     _echo_json(res)
 
+
 @app.command("council-v2")
 def council_v2_cmd(
     objetivo: str = typer.Argument(...),
     use_context: bool = typer.Option(False, help="(Opcional) integrar RAG con mem-search"),
     top_k: int = typer.Option(5, help="Resultados de memoria"),
-    rag_tag: Optional[str] = typer.Option(None, help="Tag preferente (codegen|marketing|trading)"),
-    min_score: float = typer.Option(0.0, help="Score mínimo")
+    rag_tag: str | None = typer.Option(None, help="Tag preferente (codegen|marketing|trading)"),
+    min_score: float = typer.Option(0.0, help="Score mínimo"),
 ):
     """
     Invoca el consejo v2, guarda eventos en DB, y devuelve un dict con RFC + research + plan.
@@ -166,6 +179,7 @@ def council_v2_cmd(
         min_score=min_score,
     )
     _echo_json(result)
+
 
 if __name__ == "__main__":
     app()

@@ -1,14 +1,20 @@
-import os, sys, subprocess, tempfile, json
-from typing import Dict, Any, List
+import json
+import os
+import subprocess
+import sys
+import tempfile
+from typing import Any, Dict, List
 
-def check_syntax(code: str) -> Dict[str, Any]:
+
+def check_syntax(code: str) -> dict[str, Any]:
     try:
         compile(code, "<string>", "exec")
         return {"syntax_ok": True, "errors": []}
     except SyntaxError as e:
         return {"syntax_ok": False, "errors": [f"{e.msg} at line {e.lineno}: {e.text}"]}
 
-def run_pytest(path: str) -> Dict[str, Any]:
+
+def run_pytest(path: str) -> dict[str, Any]:
     try:
         import pytest  # noqa
     except Exception:
@@ -18,5 +24,5 @@ def run_pytest(path: str) -> Dict[str, Any]:
         "pytest_available": True,
         "exit_code": proc.returncode,
         "stdout": proc.stdout[-4000:],
-        "stderr": proc.stderr[-4000:]
+        "stderr": proc.stderr[-4000:],
     }

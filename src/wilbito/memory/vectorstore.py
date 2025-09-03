@@ -1,10 +1,11 @@
 from __future__ import annotations
+
 import json
-import os
-import uuid
 import math
+import uuid
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+
 
 class VectorStore:
     """
@@ -14,12 +15,12 @@ class VectorStore:
     Persistencia en JSON: {"items":[...]}
     """
 
-    def __init__(self, items: Optional[List[Dict[str, Any]]] = None):
-        self.items: List[Dict[str, Any]] = items or []
+    def __init__(self, items: list[dict[str, Any]] | None = None):
+        self.items: list[dict[str, Any]] = items or []
 
     # ---------- Persistencia ----------
     @classmethod
-    def load(cls, path: str) -> "VectorStore":
+    def load(cls, path: str) -> VectorStore:
         p = Path(path)
         if not p.exists():
             # base vacía
@@ -41,17 +42,13 @@ class VectorStore:
         p.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # ---------- Ingesta ----------
-    def add_text(self, text: str, meta: Optional[Dict[str, Any]] = None) -> bool:
+    def add_text(self, text: str, meta: dict[str, Any] | None = None) -> bool:
         if not text or not isinstance(text, str):
             return False
-        self.items.append({
-            "id": str(uuid.uuid4()),
-            "text": text,
-            "meta": meta or {}
-        })
+        self.items.append({"id": str(uuid.uuid4()), "text": text, "meta": meta or {}})
         return True
 
-    def add_texts(self, entries: List[Dict[str, Any]]) -> int:
+    def add_texts(self, entries: list[dict[str, Any]]) -> int:
         """
         entries: List[{"text": str, "meta": dict}]
         """
@@ -64,21 +61,21 @@ class VectorStore:
         return n
 
     # ---------- Búsqueda ----------
-    def _tokenize(self, s: str) -> List[str]:
+    def _tokenize(self, s: str) -> list[str]:
         return [tok.lower() for tok in s.replace("\n", " ").split() if tok.strip()]
 
-    def _bow(self, s: str) -> Dict[str, float]:
+    def _bow(self, s: str) -> dict[str, float]:
         # Conteo simple
-        bag: Dict[str, float] = {}
+        bag: dict[str, float] = {}
         for t in self._tokenize(s):
             bag[t] = bag.get(t, 0.0) + 1.0
         # Normalización L2 para similitud coseno simple
-        norm = math.sqrt(sum(v*v for v in bag.values())) or 1.0
+        norm = math.sqrt(sum(v * v for v in bag.values())) or 1.0
         for k in list(bag.keys()):
             bag[k] /= norm
         return bag
 
-    def _cosine(self, a: Dict[str, float], b: Dict[str, float]) -> float:
+    def _cosine(self, a: dict[str, float], b: dict[str, float]) -> float:
         if not a or not b:
             return 0.0
         # producto punto en intersección
@@ -90,8 +87,8 @@ class VectorStore:
         query: str,
         top_k: int = 5,
         min_score: float = 0.0,
-        prefer_tags: Optional[List[str]] = None
-    ) -> List[Dict[str, Any]]:
+        prefer_tags: list[str] | None = None,
+    ) -> list[dict[str, Any]]:
         """
         prefer_tags: si se provee, se aplica un pequeño boost al score
         """
@@ -108,12 +105,14 @@ class VectorStore:
                 score *= 1.2  # boost suave
 
             if score >= (min_score or 0.0):
-                out.append({
-                    "id": it.get("id"),
-                    "score": round(float(score), 4),
-                    "text": it.get("text", ""),
-                    "meta": meta
-                })
+                out.append(
+                    {
+                        "id": it.get("id"),
+                        "score": round(float(score), 4),
+                        "text": it.get("text", ""),
+                        "meta": meta,
+                    }
+                )
 
         out.sort(key=lambda x: x["score"], reverse=True)
         return out[: max(1, top_k)]

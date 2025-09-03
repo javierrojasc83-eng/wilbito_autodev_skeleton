@@ -1,24 +1,24 @@
-# -*- coding: utf-8 -*-
 from __future__ import annotations
 
 import json
 import sqlite3
 import subprocess
+from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Tuple
-
+from typing import Any, Dict, List, Optional, Tuple
 
 # ----------------------------
 # Utilidades de archivo / JSON
 # ----------------------------
 
+
 def _now_iso() -> str:
-    return datetime.utcnow().replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
+    return datetime.utcnow().replace(tzinfo=UTC).isoformat().replace("+00:00", "Z")
 
 
-def _read_json_file(path: Path) -> List[Dict[str, Any]]:
+def _read_json_file(path: Path) -> list[dict[str, Any]]:
     """
     Lee un archivo JSON y devuelve una lista de steps (dicts).
     Acepta tanto:
@@ -90,18 +90,20 @@ CREATE TABLE IF NOT EXISTS tasks(
 # Tipos
 # ----------------------------
 
+
 @dataclass
 class StepResult:
     step_id: str
     command: str
     status: str  # "ok" | "error"
-    result: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
+    result: dict[str, Any] | None = None
+    error: str | None = None
 
 
 # ----------------------------
 # Núcleo del executor
 # ----------------------------
+
 
 class ExecutorLoop:
     def __init__(self, db_path: Path = DEFAULT_DB_PATH):
@@ -154,7 +156,7 @@ class ExecutorLoop:
                 elif c == "}":
                     depth -= 1
                     if depth == 0:
-                        frag = s[i:j+1]
+                        frag = s[i : j + 1]
                         try:
                             obj = json.loads(frag)
                             if isinstance(obj, dict):
@@ -243,7 +245,7 @@ class ExecutorLoop:
             conn.commit()
             return int(cur.lastrowid)
 
-    def _finish_run(self, run_id: int, status: str, meta: Optional[Dict[str, Any]] = None):
+    def _finish_run(self, run_id: int, status: str, meta: dict[str, Any] | None = None):
         with self._connect() as conn:
             conn.execute(
                 "UPDATE runs SET finished_at=?, status=?, meta_json=?, updated_at=? WHERE id=?",
@@ -251,7 +253,13 @@ class ExecutorLoop:
             )
             conn.commit()
 
-    def _event(self, level: str, event: str, details: Optional[Dict[str, Any]] = None, run_id: Optional[int] = None):
+    def _event(
+        self,
+        level: str,
+        event: str,
+        details: dict[str, Any] | None = None,
+        run_id: int | None = None,
+    ):
         with self._connect() as conn:
             conn.execute(
                 "INSERT INTO events(run_id, ts, level, event, details_json, created_at) VALUES(?,?,?,?,?,?)",
@@ -270,7 +278,7 @@ class ExecutorLoop:
         finished_at: str,
         stdout: str,
         stderr: str,
-        result: Optional[Dict[str, Any]],
+        result: dict[str, Any] | None,
     ):
         with self._connect() as conn:
             conn.execute(
@@ -292,7 +300,7 @@ class ExecutorLoop:
             conn.commit()
 
     # ---- Exec helpers ----
-    def _run_command(self, cmd: Sequence[str]) -> Tuple[int, str, str]:
+    def _run_command(self, cmd: Sequence[str]) -> tuple[int, str, str]:
         """
         Ejecuta un comando y devuelve (rc, stdout, stderr) como strings.
         """
@@ -305,10 +313,10 @@ class ExecutorLoop:
 
     def _validate_json_result(
         self,
-        data: Dict[str, Any],
-        must_have: Optional[Sequence[str]] = None,
-        fail_if_empty_fields: Optional[Sequence[str]] = None,
-    ) -> Optional[str]:
+        data: dict[str, Any],
+        must_have: Sequence[str] | None = None,
+        fail_if_empty_fields: Sequence[str] | None = None,
+    ) -> str | None:
         """
         Devuelve None si pasa las validaciones, de lo contrario un string de error.
         """
@@ -337,16 +345,21 @@ class ExecutorLoop:
     # ----------------------------
     # API pública
     # ----------------------------
-    def run(self, commands_path: str | Path, rollback_path: Optional[str | Path] = None, run_name: Optional[str] = None) -> Dict[str, Any]:
+    def run(
+        self,
+        commands_path: str | Path,
+        rollback_path: str | Path | None = None,
+        run_name: str | None = None,
+    ) -> dict[str, Any]:
         commands_path = Path(commands_path)
         rollback_path = Path(rollback_path) if rollback_path else None
         run_id = self._insert_run(run_name or f"run_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}")
 
         self._event("info", "executor start", {"commands_path": str(commands_path)}, run_id=run_id)
 
-        executed: List[StepResult] = []
+        executed: list[StepResult] = []
         overall_ok = True
-        rollback_info: Dict[str, Any] = {"status": "skipped"}
+        rollback_info: dict[str, Any] = {"status": "skipped"}
 
         try:
             steps = _read_json_file(commands_path)
@@ -376,9 +389,9 @@ class ExecutorLoop:
 
             # Construcción del resultado
             cmd_str = " ".join(cmd) if cmd else ""
-            result_obj: Optional[Dict[str, Any]] = None
+            result_obj: dict[str, Any] | None = None
             step_status = "ok"
-            step_err: Optional[str] = None
+            step_err: str | None = None
 
             if expect_json:
                 try:
@@ -404,18 +417,13 @@ class ExecutorLoop:
                         # Si el proceso devolvió rc != 0 aun con JSON, consideramos error.
                         if rc != 0:
                             step_status = "error"
-                            step_err = (
-                                f"Comando devolvió rc={rc} con JSON. "
-                                f"STDERR(preview):\n{stderr[:2000]}"
-                            )
+                            step_err = f"Comando devolvió rc={rc} con JSON. STDERR(preview):\n{stderr[:2000]}"
             else:
                 # No espera JSON: rc distinto de 0 es fallo.
                 if rc != 0:
                     step_status = "error"
                     step_err = (
-                        f"Comando devolvió rc={rc}.\n"
-                        f"STDOUT(preview):\n{stdout[:2000]}\n\n"
-                        f"STDERR(preview):\n{stderr[:2000]}"
+                        f"Comando devolvió rc={rc}.\nSTDOUT(preview):\n{stdout[:2000]}\n\nSTDERR(preview):\n{stderr[:2000]}"
                     )
 
             self._record_task(
@@ -432,10 +440,24 @@ class ExecutorLoop:
             )
 
             if step_status == "ok":
-                executed.append(StepResult(step_id=step_id, command=(cmd[0] if cmd else ""), status="ok", result=result_obj))
+                executed.append(
+                    StepResult(
+                        step_id=step_id,
+                        command=(cmd[0] if cmd else ""),
+                        status="ok",
+                        result=result_obj,
+                    )
+                )
                 self._event("info", "step ok", {"step_id": step_id}, run_id=run_id)
             else:
-                executed.append(StepResult(step_id=step_id, command=(cmd[0] if cmd else ""), status="error", error=step_err))
+                executed.append(
+                    StepResult(
+                        step_id=step_id,
+                        command=(cmd[0] if cmd else ""),
+                        status="error",
+                        error=step_err,
+                    )
+                )
                 self._event("error", "step error", {"step_id": step_id, "error": step_err}, run_id=run_id)
                 overall_ok = False
                 break  # detenemos la ejecución al primer error

@@ -1,9 +1,11 @@
 import os
-from typing import Dict, Any
+from typing import Any, Dict
+
 from rich import print
 
+
 class SafetyGate:
-    def __init__(self, cfg: Dict[str, Any]):
+    def __init__(self, cfg: dict[str, Any]):
         self.cfg = cfg
 
     def check_kill_switch(self) -> bool:

@@ -1,4 +1,6 @@
-import subprocess, os
+import os
+import subprocess
+
 
 class QualityPipeline:
     def __init__(self, base_dir: str):

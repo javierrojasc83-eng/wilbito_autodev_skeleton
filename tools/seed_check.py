@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Crea/verifica un seed determinÃ­stico en state/seed.json.
 Uso:
   python tools/seed_check.py --state state/seed.json --create-if-missing [--force]
 """
-import argparse, json, os, random, time, datetime, sys
+
+import argparse
+import datetime
+import json
+import os
+import random
+import sys
+import time
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -18,7 +25,7 @@ def main():
     os.makedirs(os.path.dirname(state_path), exist_ok=True)
 
     if os.path.exists(state_path) and not args.force:
-        with open(state_path, "r", encoding="utf-8") as f:
+        with open(state_path, encoding="utf-8") as f:
             data = json.load(f)
         print(f"Seed OK -> {data.get('seed')} (created_at={data.get('created_at')})")
         return 0
@@ -26,13 +33,14 @@ def main():
     seed = int(time.time()) ^ random.randint(1, 1_000_000)
     data = {
         "seed": seed,
-        "created_at": datetime.datetime.utcnow().isoformat()+"Z",
-        "source": "tools/seed_check.py"
+        "created_at": datetime.datetime.utcnow().isoformat() + "Z",
+        "source": "tools/seed_check.py",
     }
     with open(state_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     print(f"Seed created -> {seed} -> {state_path}")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

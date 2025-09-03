@@ -1,0 +1,32 @@
+[
+  {
+    "step_id": "db-migrate-memoria",
+    "description": "Migrate memoria/db/wilbito.db schema (runs, events, tasks).",
+    "cmd": ["python", "tools/db_migrate.py", "--db", "memoria/db/wilbito.db"],
+    "expect_json": false
+  },
+  {
+    "step_id": "db-migrate-state",
+    "description": "Migrate state/*.db schemas (fallback).",
+    "cmd": ["python", "tools/db_migrate.py"],
+    "expect_json": false
+  },
+  {
+    "step_id": "seed-check",
+    "description": "Ensure deterministic seed exists (creates state/seed.json if missing).",
+    "cmd": ["python", "tools/seed_check.py", "--state", "state/seed.json", "--create-if-missing"],
+    "expect_json": false
+  },
+  {
+    "step_id": "quality",
+    "description": "Run code quality checks via wrapper (forces clean JSON).",
+    "cmd": ["python", "tools/quality_wrapper.py"],
+    "expect_json": true
+  },
+  {
+    "step_id": "noop",
+    "description": "Placeholder step (keeps pipeline green).",
+    "cmd": ["python", "tools/noop.py"],
+    "expect_json": false
+  }
+]

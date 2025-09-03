@@ -1,5 +1,8 @@
-import os, datetime
+import datetime
+import os
+
 from ..tools.versioning import bump_version
+
 
 class ReleasePipeline:
     def __init__(self, base_dir: str):

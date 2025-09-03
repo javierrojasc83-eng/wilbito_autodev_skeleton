@@ -1,12 +1,8 @@
-# venv
+# venvs
 wilbito-env/
 .venv/
 env/
 venv/
-
-# caches
-__pycache__/
-*.pyc
 
 # runtime/data
 memoria/
