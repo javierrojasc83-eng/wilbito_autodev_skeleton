@@ -1,8 +1,15 @@
-/.vscode/
-/__pycache__/
-*.pyc
-state/
-backup/
-*.bak
-.mem/
+# venv
+wilbito-env/
 .venv/
+env/
+venv/
+
+# caches
+__pycache__/
+*.pyc
+
+# runtime/data
+memoria/
+state/
+artifacts/
+*.db
