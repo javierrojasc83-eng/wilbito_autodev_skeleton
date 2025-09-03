@@ -1,0 +1,19 @@
+# Normaliza finales de línea y marca binarios
+*               text=auto
+*.sh            text eol=lf
+*.ps1           text eol=crlf
+*.bat           text eol=crlf
+*.py            text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+*.toml          text eol=lf
+*.ini           text eol=lf
+*.md            text eol=lf
+*.json          text eol=lf
+
+# Binarios (no convertir EOL)
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.zip           binary
